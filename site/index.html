@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; form-action https://buttondown.com; base-uri 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Publish Path Score — your npm tree, scored daily</title>
+<meta name="description" content="Daily security-governance scores for the top 10,000 npm packages, from public metadata. Get the alert before the post-mortem.">
+<style>
+  :root{--bg:#0b0e14;--fg:#e6e8ee;--dim:#9aa3b2;--acc:#ff5d3b;--card:#131826;--ok:#3ecf8e;--warn:#ffb020}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;margin:0 auto;padding:56px 20px}
+  .kicker{color:var(--acc);font:600 13px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+  h1{font-size:clamp(28px,5vw,44px);line-height:1.12;margin:14px 0 12px;letter-spacing:-.02em}
+  .sub{color:var(--dim);font-size:18px;max-width:56ch}
+  .stats{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0}
+  .stat{background:var(--card);border:1px solid #1e2536;border-radius:10px;padding:14px 16px;flex:1;min-width:180px}
+  .stat b{display:block;font-size:26px;letter-spacing:-.01em}
+  .stat span{color:var(--dim);font-size:13px}
+  form{display:flex;gap:10px;margin:26px 0 8px;flex-wrap:wrap}
+  input[type=email]{flex:1;min-width:240px;background:#0f1420;border:1px solid #273049;color:var(--fg);border-radius:10px;padding:14px 16px;font-size:16px}
+  input[type=email]:focus{outline:2px solid var(--acc);border-color:transparent}
+  button{background:var(--acc);color:#14090a;border:0;border-radius:10px;padding:14px 22px;font-size:16px;font-weight:700;cursor:pointer}
+  button:hover{filter:brightness(1.08)}
+  .fine{color:var(--dim);font-size:13px}
+  .grades{margin:36px 0 0;border:1px solid #1e2536;border-radius:12px;overflow:hidden}
+  .row{display:flex;justify-content:space-between;padding:12px 16px;border-top:1px solid #1e2536;font:14px ui-monospace,monospace}
+  .row:first-child{border-top:0;background:var(--card);color:var(--dim)}
+  .g{font-weight:800}
+  .gA{color:var(--ok)}.gB{color:#8bd17c}.gD{color:var(--warn)}.gF{color:var(--acc)}
+  footer{margin-top:44px;color:var(--dim);font-size:13px}
+  a{color:var(--fg)}
+</style>
+<!-- XSS RULE, binding for all future dynamic rendering: package names,
+     maintainer handles, and repo URLs are UNTRUSTED. Render via
+     textContent / proper escaping only; never innerHTML. The lock-file
+     paste feature takes raw user input — same rule, no exceptions. -->
+</head>
+<body>
+<main class="wrap">
+  <p class="kicker">Publish Path Score · daily since 2026-07-07</p>
+  <h1>More than half the npm packages you depend on are one person's account.</h1>
+  <p class="sub">We score the security governance of the top 10,000 npm packages every day, from public metadata alone — publish provenance, maintainer surface, release governance. When a score in your tree changes, you hear about it before the post-mortem.</p>
+
+  <!-- Stats from production TOP_N=10000 snapshot 2026-07-07/meta.json -->
+  <div class="stats">
+    <div class="stat"><b>22.2%</b><span>of top packages have a verifiable publish path</span></div>
+    <div class="stat"><b>53.6%</b><span>are maintained by a single account</span></div>
+    <div class="stat"><b>10,000</b><span>packages scored daily, history kept forever</span></div>
+  </div>
+
+  <!-- SWAP: replace action with your Buttondown/Tally/Formspree endpoint -->
+  <form action="https://buttondown.com/api/emails/embed-subscribe/REPLACE_ME" method="post" target="_blank" rel="noopener noreferrer">
+    <input type="email" name="email" required placeholder="you@company.com" autocomplete="email">
+    <button type="submit">Alert me on score changes</button>
+  </form>
+  <p class="fine">Free. One email when a package you watch changes grade or flags. Paste your lock file after signup to build your watchlist.</p>
+
+  <div class="grades">
+    <div class="row"><span>package</span><span>score · flags</span></div>
+    <div class="row"><span>semver</span><span><span class="g gA">100 A</span> · clean</span></div>
+    <div class="row"><span>axios</span><span><span class="g gB">76 B</span> · inconsistent publish path · single maintainer</span></div>
+    <div class="row"><span>express</span><span><span class="g gD">39 D</span> · unverified publish path</span></div>
+    <div class="row"><span>chalk</span><span><span class="g gF">25 F</span> · unverified path · single maintainer</span></div>
+  </div>
+
+  <footer>
+    Methodology v0.2.0 is public and versioned. Every score links to the metadata behind it.
+    Maintainer of a scored package? <a href="#dispute">Dispute process</a> — corrections ship in the next daily snapshot.
+  </footer>
+</main>
+</body>
+</html>

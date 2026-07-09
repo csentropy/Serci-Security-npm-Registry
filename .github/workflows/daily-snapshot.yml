@@ -1,0 +1,65 @@
+name: daily-snapshot
+# History is the moat. This cron is the moat's heartbeat.
+# Hardening notes (this repo must pass its own rubric):
+# - Actions pinned by full commit SHA, not mutable tag: tag-pinning is
+#   the tj-actions/changed-files attack class this product scores.
+# - persist-credentials: false — the scorer step processes untrusted
+#   remote metadata and must never run with a write token on disk.
+# - Enrichment token is a separate READ-ONLY fine-grained PAT
+#   (public_repo read). Never reuse github.token for enrichment.
+# - pip runs with --require-hashes --only-binary to block sdist code
+#   execution and unpinned transitive dependencies.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"   # 06:17 UTC; odd minute avoids cron-storm delay
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    # Measured 10K wall-clock is ~132 min: CPU-bound on json.loads of multi-MB
+    # packuments (GIL-serialized, so more workers do not help). The run is
+    # correct and completes; 120 min guillotined it mid-fetch. Public repo =
+    # free unlimited minutes, so the headroom costs nothing. Job hard cap is 6h.
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Install (hash-pinned, wheels only)
+        # Block scalar: the "--only-binary :all:" arg contains a colon-space,
+        # which is invalid inside a plain YAML scalar (GitHub rejects the whole
+        # workflow). A literal block sidesteps YAML scalar rules entirely.
+        run: |
+          pip install --require-hashes --only-binary :all: -r scorer/requirements.txt
+
+      - name: Run scorer
+        env:
+          TOP_N: "10000"
+          GITHUB_TOKEN: ${{ secrets.ENRICH_TOKEN }}  # read-only PAT or empty
+        run: python scorer/run.py
+
+      - name: Commit snapshot (append-only)
+        env:
+          PUSH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "depscore-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add snapshots/
+          git diff --cached --quiet && echo "nothing new" && exit 0
+          git commit -m "snapshot $(date -u +%F)"
+          git push "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${GITHUB_REF_NAME}"

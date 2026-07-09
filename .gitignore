@@ -1,0 +1,119 @@
+########################################
+# Secrets / environment files
+########################################
+.env
+.env.*
+!.env.example
+.envrc
+*.local
+*.secret
+*.secrets
+secrets/
+secret/
+private/
+credentials/
+credentials.*
+config/secrets.*
+config/*.local.*
+
+########################################
+# Keys, certs, tokens, auth files
+########################################
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.crt
+*.cer
+id_rsa
+id_ed25519
+*.ppk
+.netrc
+.npmrc
+.pypirc
+
+########################################
+# Cloud / deployment credentials
+########################################
+.aws/
+.gcloud/
+.azure/
+.kube/
+kubeconfig
+*.tfvars
+*.tfstate
+*.tfstate.*
+.terraform/
+
+########################################
+# Databases, dumps, backups, exports
+# Keep these if they are real source fixtures.
+########################################
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.bak
+*.backup
+*.sql
+data/
+exports/
+uploads/
+backups/
+
+########################################
+# Logs / runtime files
+########################################
+*.log
+logs/
+tmp/
+temp/
+.cache/
+
+########################################
+# OS / editor files
+########################################
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+########################################
+# Node / JS
+########################################
+node_modules/
+dist/
+build/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+########################################
+# Python
+########################################
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+########################################
+# Java / JVM
+########################################
+target/
+.gradle/
+*.class
+*.jar
+
+########################################
+# General build artifacts
+########################################
+out/
+bin/
+obj/
