@@ -19,20 +19,26 @@ at ecosystem scale, daily, with a kept history. This does.
   snapshot writer, append-only).
 - .github/workflows/daily-snapshot.yml — the moat's heartbeat. Push the
   repo, enable Actions, history starts today. $0/month.
-- snapshots/2026-07-07/ — founding row. Generated live at the production
-  TOP_N=10000: 9,968 of 10,000 scored, 6 fetch errors (0.06%).
+- snapshots/2026-07-07/ — calibration run (status: calibration, local
+  vantage). Raw-fetch governance signals were depressed by local-IP
+  throttling; retained and labeled, excluded from the series. See its
+  meta.json. The canonical daily series begins 2026-07-09 (CI vantage).
+- snapshots/2026-07-09/ — canonical day 1. TOP_N=10000 on CI:
+  9,974 scored, 5 fetch errors (0.05%).
 - templates/postmortem.md — the ambush kit. Pre-written incident
   analysis with fill-in slots; ship within 6 hours of the next incident.
 - site/index.html — capture page. Swap the form action for your
   Buttondown/Tally endpoint, put it behind a domain.
 
-## Day-1 numbers (top 10,000, blended list, rubric v0.2.0)
-22.2% have an attested latest release. 53.6% are single-maintainer.
-Grade distribution: A 349 | B 1409 | C 485 | D 1374 | F 6351 (of 9,968
+## Day-1 numbers (canonical run 2026-07-09, top 10,000, rubric v0.2.0)
+22.3% have an attested latest release. 53.4% are single-maintainer.
+Grade distribution: A 399 | B 1514 | C 336 | D 1417 | F 6308 (of 9,974
 scored). Grades measure verifiability of the publish path, not proven
 compromise — an F is an UNVERIFIED_PUBLISH_PATH, not a vulnerability.
-The single-maintainer share rises from 47% in the top 300 to 53.6%
-across the top 10K: the long tail is where the surface concentrates.
+More than half the top 10K are single-maintainer: the long tail is where
+the surface concentrates. (The 2026-07-07 calibration run reads slightly
+lower on governance signals — a local-vantage throttling artifact, not a
+real shift; it is labeled and excluded from the series.)
 
 ## Operating rules (non-negotiable)
 1. Absence of evidence scores as UNVERIFIED, never proven-bad. All
