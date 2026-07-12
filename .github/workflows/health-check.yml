@@ -1,0 +1,48 @@
+name: health-check
+# Fires when daily-snapshot COMPLETES — success or failure — so it is immune
+# to cron start-delays and long runs (the 07-10 run started 3.5h late and
+# finished at 11:53 UTC; any fixed-clock watcher would have false-alarmed).
+# Failure channel: this job failing = GitHub's own failure email to the repo
+# owner. No token, no webhook, no external service.
+#
+# Hardening (must pass its own rubric, same as the other workflows):
+# - Actions pinned by full commit SHA.
+# - persist-credentials: false; permissions read-only. health.py reads only
+#   files already committed to this repo — no untrusted remote fetches.
+# - stdlib only: no pip install at all in this job.
+#
+# NOTE: workflow_run only triggers once this file is on the default branch.
+
+on:
+  workflow_run:
+    workflows: ["daily-snapshot"]
+    types: [completed]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fail if the snapshot run itself failed
+        if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success' }}
+        run: |
+          echo "daily-snapshot concluded: ${{ github.event.workflow_run.conclusion }}"
+          echo "No snapshot to check — the heartbeat itself failed or timed out."
+          exit 1
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          # default ref = default-branch HEAD, which includes the snapshot
+          # commit the completed run just pushed.
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Run health predicates
+        run: python scorer/health.py
