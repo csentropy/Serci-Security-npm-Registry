@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-23",
+  "generated_at": "2026-11-23T20:14:29.983773+00:00",
+  "methodology_version": "v0.2.0",
+  "requested": 10000,
+  "scored": 9977,
+  "errors": 5,
+  "grade_distribution": {
+    "A": 666,
+    "C": 340,
+    "D": 1227,
+    "F": 5709,
+    "B": 2035
+  },
+  "pct_latest_attested": 30.2,
+  "pct_single_maintainer": 50.5,
+  "sha256": {
+    "scores.json": "248c245818dacfffe3ec763462c498e2bca0068f0e9f30036d429febf343ef4b",
+    "scores.csv": "786f7a2e92dafaf737ded5dac9f1c23a882c3aca36347928eaaf164e2e20ddcb"
+  }
+}
